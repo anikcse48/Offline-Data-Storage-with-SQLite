@@ -1,23 +1,20 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Tabs } from 'expo-router';
+import {Stack} from "expo-router/stack";
+import { SQLiteDatabase, SQLiteProvider } from 'expo-sqlite';
+import * as SQLite from 'expo-sqlite';
 
-export default function TabLayout() {
-  return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: 'blue' }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="home" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="cog" color={color} />,
-        }}
-      />
-    </Tabs>
-  );
+export default function Layout(){
+    const createDbIfNeeded= async (db: SQLiteDatabase) =>{
+        console.log("Creating database if needed");
+        await db.execAsync(
+            "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT);"
+        );
+    };
+    return(
+        <SQLiteProvider databaseName="test.db" onInit={createDbIfNeeded}>
+        <Stack>
+            <Stack.Screen name="tabs" options={{headerShown:false}}/>
+            <Stack.Screen name="modal" options={{ presentation: "modal"}}/>
+        </Stack>
+        </SQLiteProvider>
+    );
 }
